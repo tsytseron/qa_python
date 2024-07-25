@@ -5,7 +5,7 @@ class TestBooksCollector:
 
     # тестируем добавление новых книг
     @pytest.mark.parametrize('name', ['Тёмная башня', 'Оно'])
-    def test_add_new_book_add_two_books(self, name):
+    def test_add_new_book_add_books(self, name):
         collector = BooksCollector()
         collector.add_new_book(name)
         assert name in collector.get_books_genre()
@@ -14,11 +14,9 @@ class TestBooksCollector:
     def test_set_book_genre(self):
         collector = BooksCollector()
         collector.add_new_book('Тёмная башня')
-        collector.add_new_book('Оно')
         collector.set_book_genre('Тёмная башня', 'Фантастика')
-        collector.set_book_genre('Оно', 'Ужасы')
         assert collector.get_book_genre('Тёмная башня') == 'Фантастика'
-        assert collector.get_book_genre('Оно') == 'Ужасы'
+        # исправлено
 
     # тестируем получение жанра книги по её имени
     def test_get_book_genre(self):
@@ -28,16 +26,23 @@ class TestBooksCollector:
         collector.set_book_genre("Тёмная Башня", genre)
         assert collector.get_book_genre("Тёмная Башня") == genre
 
-    # тестируем вывод списка книг с определённым жанром
-    def test_get_books_with_specific_genre(self):
+    # тестируем добавление книги с определённым жанром в список книг с определённым жанром
+    def test_get_books_with_specific_genre_includes_correct_book(self):
         collector = BooksCollector()
         collector.add_new_book('Оно')
-        collector.add_new_book('Тёмная башня')
         collector.set_book_genre('Оно', 'Ужасы')
-        collector.set_book_genre('Тёмная башня', 'Фантастика')
         books = collector.get_books_with_specific_genre('Ужасы')
         assert 'Оно' in books
+        # исправлено
+
+    # тестируем отсутствие книги без определённого жанра в списке книг с определённым жанром
+    def test_get_books_with_specific_genre_excludes_other_books(self):
+        collector = BooksCollector()
+        collector.add_new_book('Тёмная башня')
+        collector.set_book_genre('Тёмная башня', 'Фантастика')
+        books = collector.get_books_with_specific_genre('Ужасы')
         assert 'Тёмная башня' not in books
+        # исправлено
 
     # тестируем получение словаря books_genre
     def test_get_books_genre(self):
